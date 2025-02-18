@@ -1,14 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const userRoutes = require("./API/User/UserRouter");
+const userRoutes = require("./API/User/UserRouter.js");
 
 const app = express();
 app.use(express.json()); // מאפשר לעבוד עם JSON בבקשות
 
 // חיבור למסד הנתונים
 mongoose.connect("mongodb://127.0.0.1:27017/myDB", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
 })
 .then(() => console.log("✅ מחובר ל-MongoDB"))
 .catch(err => console.error("❌ שגיאה בחיבור:", err));

@@ -31,6 +31,15 @@ const userSchema = new mongoose.Schema({
         trim: true,
         match: [/^\d{10}$/, "מספר טלפון חייב להכיל 10 ספרות"]
     },
+    birthday: {
+        type: Date,
+        required: true
+    },
+    Permissions:{
+        type: String,
+        enum: ['user', 'gabay','manager','admin'],
+        required: true
+    },
     password: {
         type: String,
         required: true,
@@ -41,9 +50,22 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    debt: {
+        type: Number,
+        default: 0
+    },
+    donation: {
+        type: Number,
+        default: 0
+    },
     isAdmin: {
         type: Boolean,
         default: false
+    },
+    totalPaid: {
+        type: Number,
+        default: 0,
+        comment: "כמה שילם עד עכשיו"
     }
 });
 

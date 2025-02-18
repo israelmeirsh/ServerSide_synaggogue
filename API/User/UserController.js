@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 // רישום משתמש חדש
 exports.registerUser = async (req, res) => {
     try {
-        const { firstName, fatherName, lastName, phone, password } = req.body;
+        const { firstName, fatherName, lastName,birthday ,phone, password } = req.body;
 
         // בדיקה אם המשתמש כבר קיים לפי מספר טלפון
         const existingUser = await User.findOne({ phone });
@@ -13,10 +13,10 @@ exports.registerUser = async (req, res) => {
         }
 
         // יצירת משתמש חדש ושמירתו במסד הנתונים
-        const newUser = new User({ firstName, fatherName, lastName, phone, password });
-        await newUser.save();
+        const newUser = new User({ firstName, fatherName, lastName, phone, birthday,password });
+        const savedUser = await newUser.save();
 
-        res.status(201).json({ message: "משתמש נרשם בהצלחה!", user: newUser });
+        res.status(201).json({ message: "משתמש נרשם בהצלחה!", user: savedUser });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -47,6 +47,45 @@ exports.loginUser = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+// עדכון משתמש
+exports.updeateUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { firstName, fatherName, lastName, birthday,phone, password } = req.body;
+
+        // בדיקה אם המשתמש קיים
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(400).json({ message: "משתמש לא נמצא" });
+        }
+
+        // עדכון המשתמש במסד הנתונים
+        user.firstName = firstName;
+        user.fatherName = fatherName;
+        user.lastName = lastName;
+        user.phone = phone;
+        user.birthday = birthday;
+        user.password = password;
+        await user.save();
+
+        res.json({ message: "משתמש עודכן בהצלחה!", user });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+} 
+exports.getUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(400).json({ message: "משתמש לא נמצא" });
+        }
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}
+
 
 // שליפת כל המשתמשים (לבדיקה)
 exports.getAllUsers = async (req, res) => {
