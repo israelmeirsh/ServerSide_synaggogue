@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 // סכמה של משתמש במערכת
 const userSchema = new mongoose.Schema({
@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
     phone: {
         type: String,
         required: true,
-        unique: true,
+        unique: [true, "מספר טלפון כבר רשום במערכת"],
         trim: true,
         match: [/^\d{10}$/, "מספר טלפון חייב להכיל 10 ספרות"]
     },
@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    Permissions:{
+    Permission:{
         type: String,
         enum: ['user', 'gabay','manager','admin'],
         required: true
@@ -72,17 +72,26 @@ const userSchema = new mongoose.Schema({
 // הצפנת סיסמה לפני שמירה
 userSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
-    this.password = await bcrypt.hash(this.password, 10); 
-    next();
+    try {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (err) {
+        next(err);
+    }
 });
 
 // פונקציה להשוואת סיסמאות (לבדיקת התחברות)
 userSchema.methods.comparePassword = async function(enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this.password);
+    try {
+        return await bcrypt.compare(enteredPassword, this.password);
+    } catch (err) {
+        throw new Error("השוואת הסיסמה נכשלה");
+    }
 };
 
 // פונקציה שמחזירה סיסמה רק למנהלים (לפי דרישה)
-userSchema.methods.getPasswordForAdmin = function (isAdmin) {
+userSchema.methods.getPasswordForAdmin = function(isAdmin) {
     return isAdmin ? this.password : "גישה חסומה";
 };
 
