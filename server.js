@@ -1,20 +1,20 @@
-const express = require('express');
+const express = require("express");
+const mongoose = require("mongoose");
+const userRoutes = require("./API/User/UserRouter");
+
 const app = express();
-const mongoose = require('mongoose');
-const userRouter = require('./api/User/UserRouters.js');
+app.use(express.json()); // מאפשר לעבוד עם JSON בבקשות
 
-app.use(express.json());
-app.use('/api/user', userRouter);
+// חיבור למסד הנתונים
+mongoose.connect("mongodb://127.0.0.1:27017/myDB", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => console.log("✅ מחובר ל-MongoDB"))
+.catch(err => console.error("❌ שגיאה בחיבור:", err));
 
-mongoose.connect('mongodb://127.0.0.1/synaggogueDB')
-    .then(() => console.log('Connected to MongoDB'))
-    .catch((error) => console.error('Error connecting to MongoDB:', error));
+// שימוש בנתיבים
+app.use("/api/users", userRoutes);
 
-app.get('/', (req, res) => {
-    res.send('Hello, World!');
-});
-
-app.listen(3000, () => {
-    console.log('Server started on port 3000');
-});
-
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 השרת פועל על פורט ${PORT}`));
