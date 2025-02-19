@@ -50,23 +50,11 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    debt: {
-        type: Number,
-        default: 0
-    },
-    donation: {
-        type: Number,
-        default: 0
-    },
     isAdmin: {
         type: Boolean,
         default: false
     },
-    totalPaid: {
-        type: Number,
-        default: 0,
-        comment: "כמה שילם עד עכשיו"
-    }
+  
 });
 
 // הצפנת סיסמה לפני שמירה

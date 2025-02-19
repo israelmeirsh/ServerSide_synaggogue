@@ -10,16 +10,26 @@ exports.registerUser = async (req, res) => {
         const newUser = new User({ firstName, fatherName, lastName, phone, birthday, password, Permission: 'user' });
         const savedUser = await newUser.save();
 
-        res.status(201).json({ message: "משתמש נרשם בהצלחה!", user: savedUser });
+        const token = jwt.sign({ userId: savedUser._id},process.env.TOKEN_SECRET , { expiresIn:"1h" });
+        
+        res.status(201).json({ message: "משתמש נרשם בהצלחה!", 
+            data:{id: savedUser._id, 
+                firstName: savedUser.firstName, 
+                fatherName: savedUser.fatherName, 
+                lastName: savedUser.lastName, 
+                birthday: savedUser.birthday, 
+                phone: savedUser.phone, 
+                Permission: savedUser.Permission }
+        }, token
+        );
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 };
 
-// // התחברות משתמש
-exports.loginUser = async (req, res) => {
+// התחברות משתמש
+exports.loginUser = async function (req, res) {
     const { phone, password } = req.body;
-
     try {
        
         // בדיקה אם המשתמש קיים
@@ -28,9 +38,11 @@ exports.loginUser = async (req, res) => {
             return res.status(400).json({ message: "Invalid phone or password " });
         }
         // יצירת טוקן (JWT)
-        const token = jwt.sign({ userId: user._id, Permission: user.Permission },"mySecretKey", { expiresIn:"1h" });
+        const token = jwt.sign({ userId: user._id},process.env.TOKEN_SECRET , { expiresIn:"1h" });
 
-        res.json({ message: "Login successful", token });
+        res.json({ message: "Login successful", data:{id:user._id, firstName:user.firstName, fatherName:user.fatherName, lastName:user.lastName, birthday:user.birthday, phone:user.phone, Permission:user.Permission}, 
+         token 
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
