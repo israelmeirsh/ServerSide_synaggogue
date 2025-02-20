@@ -31,7 +31,6 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async function (req, res) {
     const { phone, password } = req.body;
     try {
-       
         // בדיקה אם המשתמש קיים
         const user = await User.findOne({ phone });
         if (!user || !bcrypt.compareSync(password, user.password)) {
@@ -40,8 +39,15 @@ exports.loginUser = async function (req, res) {
         // יצירת טוקן (JWT)
         const token = jwt.sign({ userId: user._id},process.env.TOKEN_SECRET , { expiresIn:"1h" });
 
-        res.json({ message: "Login successful", data:{id:user._id, firstName:user.firstName, fatherName:user.fatherName, lastName:user.lastName, birthday:user.birthday, phone:user.phone, Permission:user.Permission}, 
-         token 
+        res.json({ message: "Login successful", 
+            data:{id:user._id, 
+                firstName:user.firstName, 
+                fatherName:user.fatherName, 
+                lastName:user.lastName, 
+                birthday:user.birthday, 
+                phone:user.phone, 
+                Permission:user.Permission}, 
+        token 
         });
     } catch (err) {
         res.status(500).json({ error: err.message });

@@ -6,7 +6,7 @@ const router = express.Router();
 router.post("/", createPayment);
 
 // Route to get all payments
-router.get("/", getPayments);
+router.get("/", getPayments); 
 
 // Route to update a payment by ID
 router.put("/:id", updatePaymentById);
