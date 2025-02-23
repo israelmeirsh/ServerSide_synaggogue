@@ -18,7 +18,13 @@ const AliaSchema = new mongoose.Schema({
     debt: {
         type: Number,
         default: 0
-    },
+    },   
+    invoiceId: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: false,
+            ref: 'Payments'
+        },
+    
 })
 
 mongoose.model = mongoose.model('alia',AliaSchema);

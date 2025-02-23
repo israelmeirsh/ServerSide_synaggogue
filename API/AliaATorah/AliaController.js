@@ -1,10 +1,9 @@
-const Alia = require('./AliaSchema')
-
+const Alia = require('./AliaSchema');
 
 exports.addAlia = async (req, res) => {
     try {
-        const { Parasha, alia, debt, userId } = req.body;
-        const newAlia = new Alia({ Parasha, alia, debt, userId });
+        const { Parasha, alia, debt, userId, invoiceId } = req.body;
+        const newAlia = new Alia({ Parasha, alia, debt, userId, invoiceId });
         const savedAlia = await newAlia.save();
         res.json({ message: "עליה נוספה בהצלחה!", savedAlia });
     } catch (err) {
@@ -37,8 +36,8 @@ exports.getAliaById = async (req, res) => {
 exports.updateAliaById = async (req, res) => {
     try {
         const { id } = req.params;
-        const { Parasha, alia, debt } = req.body;
-        const updatedAlia = await Alia.findByIdAndUpdate(id, { Parasha, alia, debt }, { new: true });
+        const { Parasha, alia, debt, invoiceId } = req.body;
+        const updatedAlia = await Alia.findByIdAndUpdate(id, { Parasha, alia, debt, invoiceId }, { new: true });
         if (!updatedAlia) {
             return res.status(404).json({ message: "עליה לא נמצאה" });
         }
@@ -60,6 +59,4 @@ exports.deleteAliaById = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
-
-
 

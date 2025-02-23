@@ -16,14 +16,6 @@ const PaymentsSchema = new mongoose.Schema({
         required: true,
         enum: ['card', 'cash']
     },
-    paymentItem: {
-        type: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'alia'
-        }],
-        required: true,
-    },
-    donation: Number,
     totalPaid: {
         type: Number,
         required: true,

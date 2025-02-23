@@ -3,7 +3,6 @@ const Payment = require('./PaymentsModel');
 exports.getPayments = async (req, res) => {
     try {
         const payments = await Payment.find()
-            .populate('paymentItem', 'Parasha alia debt')
             .populate('userId', 'firstName lastName');
         res.json(payments);
     } catch (err) {
@@ -14,8 +13,8 @@ exports.getPayments = async (req, res) => {
 exports.updatePaymentById = async (req, res) => {
     try {
         const { id } = req.params;
-        const { userId, paymentItem, paymentMethod, donation, totalPaid, cardDetails } = req.body;
-        const updatedPayment = await Payment.findByIdAndUpdate(id, { userId, paymentItem, paymentMethod, donation, totalPaid, cardDetails }, { new: true });
+        const { userId, paymentMethod, totalPaid, cardDetails } = req.body;
+        const updatedPayment = await Payment.findByIdAndUpdate(id, { userId, paymentMethod, totalPaid, cardDetails }, { new: true });
         if (!updatedPayment) {
             return res.status(404).json({ message: "Payment not found" });
         }
